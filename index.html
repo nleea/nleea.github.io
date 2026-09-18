@@ -1,0 +1,1681 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#14181c" />
+    <title>El Pase — El sistema operativo de tu restaurante</title>
+    <meta
+      name="description"
+      content="Plataforma multi-sucursal para restaurantes: menú, comandas, cocina (KDS), caja, delivery, inventario, compras, clientes y finanzas. Todo en un solo lugar."
+    />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --graphite-900: #14181c;
+        --graphite-800: #1f242a;
+        --graphite-700: #2b3138;
+        --steel-600: #566069;
+        --steel-500: #6b7682;
+        --steel-400: #97a0aa;
+        --steel-300: #c2c8cd;
+        --app: #f1f3f5;
+        --paper: #fbfbf9;
+        --surface: #ffffff;
+        --sunken: #eceef1;
+        --ink: #1b1f24;
+        --muted: #5b6672;
+        --line: #dde1e4;
+        --hairline: #e7eaed;
+        --ember: #f2933b;
+        --ember-600: #d97a22;
+        --ember-50: #fef6ec;
+        --ember-100: #fce8cf;
+        --success: #2f9e5b;
+        --success-600: #248049;
+        --warn: #d98a15;
+        --info: #3b7fd9;
+        --alert: #c8472f;
+        --font-display: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
+        --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+        --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+        --shadow-card: 0 1px 2px -1px rgb(20 24 28 / 0.06), 0 8px 24px -18px rgb(20 24 28 / 0.28);
+        --shadow-lg: 0 24px 60px -30px rgb(20 24 28 / 0.5);
+        --radius: 0.875rem;
+        --maxw: 1180px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background: var(--app);
+        color: var(--ink);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: var(--font-display);
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      img {
+        max-width: 100%;
+        display: block;
+      }
+
+      ::selection {
+        background: color-mix(in oklab, var(--ember) 30%, transparent);
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--ember);
+        outline-offset: 3px;
+        border-radius: 4px;
+      }
+
+      .wrap {
+        width: 100%;
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      .eyebrow {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--steel-500);
+      }
+
+      .mono {
+        font-family: var(--font-mono);
+        font-feature-settings: 'tnum' 1;
+      }
+
+      .ember {
+        color: var(--ember);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        padding: 0.8rem 1.4rem;
+        border-radius: 0.7rem;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+        white-space: nowrap;
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      .btn-primary {
+        background: var(--ember);
+        color: #1b1206;
+        box-shadow: 0 10px 24px -12px color-mix(in oklab, var(--ember) 80%, transparent);
+      }
+
+      .btn-primary:hover {
+        background: var(--ember-600);
+      }
+
+      .btn-ghost {
+        background: transparent;
+        color: var(--ink);
+        border-color: var(--line);
+      }
+
+      .btn-ghost:hover {
+        border-color: var(--steel-400);
+        background: var(--surface);
+      }
+
+      .btn-dark-ghost {
+        background: rgb(255 255 255 / 0.06);
+        color: #fff;
+        border-color: rgb(255 255 255 / 0.18);
+      }
+
+      .btn-dark-ghost:hover {
+        background: rgb(255 255 255 / 0.12);
+      }
+
+      header.nav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: color-mix(in oklab, var(--graphite-900) 88%, transparent);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgb(255 255 255 / 0.08);
+      }
+
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 68px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        color: #fff;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 1.15rem;
+      }
+
+      .brand-mark {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(140deg, var(--ember), var(--ember-600));
+        color: #1b1206;
+        font-size: 18px;
+        box-shadow: 0 6px 18px -8px var(--ember);
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 1.75rem;
+        list-style: none;
+      }
+
+      .nav-links a {
+        color: var(--steel-300);
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: color 0.2s ease;
+      }
+
+      .nav-links a:hover {
+        color: #fff;
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .nav-toggle {
+        display: none;
+        background: transparent;
+        border: 1px solid rgb(255 255 255 / 0.18);
+        color: #fff;
+        border-radius: 8px;
+        padding: 0.45rem 0.6rem;
+        cursor: pointer;
+        font-size: 1.2rem;
+        line-height: 1;
+      }
+
+      .mobile-menu {
+        display: none;
+        flex-direction: column;
+        gap: 0.25rem;
+        padding: 0.75rem 0 1.25rem;
+        border-top: 1px solid rgb(255 255 255 / 0.08);
+      }
+
+      .mobile-menu a {
+        color: var(--steel-300);
+        padding: 0.7rem 0;
+        font-weight: 500;
+        border-bottom: 1px solid rgb(255 255 255 / 0.06);
+      }
+
+      .mobile-menu.open {
+        display: flex;
+      }
+
+      .hero {
+        position: relative;
+        background-color: var(--graphite-900);
+        background-image:
+          radial-gradient(
+            75% 55% at 50% -6%,
+            color-mix(in oklab, var(--ember) 30%, transparent),
+            transparent 58%
+          ),
+          repeating-linear-gradient(90deg, rgb(255 255 255 / 0.018) 0 1px, transparent 1px 7px);
+        color: #fff;
+        padding: clamp(3rem, 8vw, 6rem) 0 clamp(4rem, 9vw, 7rem);
+        overflow: hidden;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.05fr 1fr;
+        gap: 3.5rem;
+        align-items: center;
+      }
+
+      .hero .eyebrow {
+        color: var(--ember);
+      }
+
+      .hero h1 {
+        font-size: clamp(2.1rem, 1.2rem + 4vw, 3.75rem);
+        font-weight: 800;
+        margin: 1.1rem 0 1.2rem;
+      }
+
+      .hero h1 .glow {
+        background: linear-gradient(120deg, var(--ember), #ffd9a8);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .hero p.lead {
+        color: var(--steel-300);
+        font-size: clamp(1rem, 0.95rem + 0.3vw, 1.18rem);
+        max-width: 34rem;
+        margin-bottom: 2rem;
+      }
+
+      .hero-cta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin-bottom: 2rem;
+      }
+
+      .hero-note {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        color: var(--steel-400);
+        font-size: 0.82rem;
+        font-family: var(--font-mono);
+      }
+
+      .hero-note span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--success);
+        box-shadow: 0 0 0 4px color-mix(in oklab, var(--success) 20%, transparent);
+      }
+
+      .screen {
+        position: relative;
+        border-radius: 1rem;
+        background: var(--graphite-800);
+        border: 1px solid rgb(255 255 255 / 0.1);
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+        transform: perspective(1400px) rotateY(-6deg) rotateX(3deg);
+        transition: transform 0.5s ease;
+      }
+
+      .screen:hover {
+        transform: perspective(1400px) rotateY(0) rotateX(0);
+      }
+
+      .screen-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.7rem 0.9rem;
+        background: rgb(0 0 0 / 0.25);
+        border-bottom: 1px solid rgb(255 255 255 / 0.08);
+      }
+
+      .screen-bar i {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: var(--steel-600);
+      }
+
+      .screen-bar i:nth-child(1) {
+        background: #e8654f;
+      }
+
+      .screen-bar i:nth-child(2) {
+        background: #e0b23e;
+      }
+
+      .screen-bar i:nth-child(3) {
+        background: #4fb977;
+      }
+
+      .screen-url {
+        margin-left: 0.6rem;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--steel-400);
+      }
+
+      .kds {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.65rem;
+        padding: 0.9rem;
+      }
+
+      .chit {
+        background: var(--paper);
+        border-radius: 0.6rem;
+        padding: 0.75rem;
+        color: var(--ink);
+        box-shadow: var(--shadow-card);
+      }
+
+      .chit-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.55rem;
+      }
+
+      .chit-top b {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.05em;
+      }
+
+      .pill {
+        font-family: var(--font-mono);
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 0.1rem 0.45rem;
+        border-radius: 999px;
+        border: 1px solid transparent;
+      }
+
+      .pill-warn {
+        color: #8a5a0c;
+        background: color-mix(in oklab, var(--warn) 18%, white);
+        border-color: color-mix(in oklab, var(--warn) 30%, transparent);
+      }
+
+      .pill-info {
+        color: #2f66b0;
+        background: color-mix(in oklab, var(--info) 14%, white);
+        border-color: color-mix(in oklab, var(--info) 28%, transparent);
+      }
+
+      .pill-success {
+        color: var(--success-600);
+        background: color-mix(in oklab, var(--success) 14%, white);
+        border-color: color-mix(in oklab, var(--success) 28%, transparent);
+      }
+
+      .chit ul {
+        list-style: none;
+        font-size: 0.76rem;
+        color: var(--muted);
+      }
+
+      .chit ul li {
+        padding: 0.22rem 0;
+        border-bottom: 1px dashed var(--hairline);
+      }
+
+      .chit ul li span {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      .chit-foot {
+        margin-top: 0.5rem;
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        color: var(--steel-500);
+      }
+
+      .heat {
+        box-shadow:
+          0 0 0 1px color-mix(in oklab, var(--alert) 55%, transparent),
+          0 12px 30px -16px color-mix(in oklab, var(--alert) 55%, transparent);
+      }
+
+      .stats {
+        background: var(--graphite-900);
+        color: #fff;
+        border-top: 1px solid rgb(255 255 255 / 0.07);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        padding: 2rem 0;
+      }
+
+      .stat {
+        text-align: center;
+        padding: 0.5rem;
+      }
+
+      .stat b {
+        display: block;
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 1.1rem + 1.6vw, 2.4rem);
+        color: #fff;
+      }
+
+      .stat span {
+        font-size: 0.8rem;
+        color: var(--steel-400);
+      }
+
+      section {
+        padding: clamp(3.5rem, 7vw, 6rem) 0;
+      }
+
+      .section-head {
+        max-width: 44rem;
+        margin-bottom: 3rem;
+      }
+
+      .section-head.center {
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+      }
+
+      .section-head h2 {
+        font-size: clamp(1.7rem, 1.2rem + 2vw, 2.6rem);
+        font-weight: 800;
+        margin: 0.9rem 0 0.9rem;
+      }
+
+      .section-head p {
+        color: var(--muted);
+        font-size: 1.02rem;
+      }
+
+      .modules {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+      }
+
+      .module {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-card);
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .module:hover {
+        transform: translateY(-4px);
+        border-color: color-mix(in oklab, var(--ember) 45%, var(--line));
+        box-shadow: 0 18px 40px -24px rgb(20 24 28 / 0.4);
+      }
+
+      .module-ico {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        font-size: 20px;
+        background: var(--ember-50);
+        border: 1px solid var(--ember-100);
+        margin-bottom: 0.9rem;
+      }
+
+      .module h3 {
+        font-size: 1.05rem;
+        margin-bottom: 0.4rem;
+      }
+
+      .module p {
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .module .tag {
+        display: inline-block;
+        margin-top: 0.9rem;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--steel-500);
+      }
+
+      .flow {
+        background: var(--graphite-900);
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .flow::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: repeating-linear-gradient(90deg, rgb(255 255 255 / 0.02) 0 1px, transparent 1px 7px);
+        pointer-events: none;
+      }
+
+      .flow .section-head h2,
+      .flow .section-head p {
+        color: #fff;
+      }
+
+      .flow .section-head p {
+        color: var(--steel-300);
+      }
+
+      .flow .eyebrow {
+        color: var(--ember);
+      }
+
+      .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.75rem;
+        position: relative;
+      }
+
+      .tab {
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 0.5rem 0.9rem;
+        border-radius: 999px;
+        border: 1px solid rgb(255 255 255 / 0.16);
+        background: transparent;
+        color: var(--steel-300);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .tab.active {
+        background: var(--ember);
+        border-color: var(--ember);
+        color: #1b1206;
+        font-weight: 600;
+      }
+
+      .flow-panel {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+        align-items: center;
+        position: relative;
+      }
+
+      .flow-step {
+        display: none;
+      }
+
+      .flow-step.active {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+        align-items: center;
+        animation: fade 0.4s ease;
+      }
+
+      @keyframes fade {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .flow-copy h3 {
+        font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem);
+        margin-bottom: 0.8rem;
+      }
+
+      .flow-copy p {
+        color: var(--steel-300);
+        margin-bottom: 1.25rem;
+      }
+
+      .flow-copy ul {
+        list-style: none;
+        display: grid;
+        gap: 0.6rem;
+      }
+
+      .flow-copy li {
+        display: flex;
+        gap: 0.6rem;
+        color: var(--steel-300);
+        font-size: 0.92rem;
+        align-items: flex-start;
+      }
+
+      .flow-copy li::before {
+        content: '→';
+        color: var(--ember);
+        font-family: var(--font-mono);
+      }
+
+      .flow-card {
+        background: var(--graphite-800);
+        border: 1px solid rgb(255 255 255 / 0.1);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .flow-card .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.7rem 0;
+        border-bottom: 1px solid rgb(255 255 255 / 0.07);
+        font-size: 0.88rem;
+      }
+
+      .flow-card .row:last-child {
+        border-bottom: none;
+      }
+
+      .flow-card .row span:first-child {
+        color: var(--steel-400);
+      }
+
+      .flow-card .row span:last-child {
+        color: #fff;
+        font-family: var(--font-mono);
+        font-size: 0.82rem;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+
+      .feature {
+        display: flex;
+        gap: 1rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 1.4rem;
+        box-shadow: var(--shadow-card);
+      }
+
+      .feature-ico {
+        flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        font-size: 21px;
+        background: var(--ink);
+        color: var(--ember);
+      }
+
+      .feature h3 {
+        font-size: 1.02rem;
+        margin-bottom: 0.35rem;
+      }
+
+      .feature p {
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .pricing {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        align-items: stretch;
+      }
+
+      .plan {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 1.75rem;
+        display: flex;
+        flex-direction: column;
+        box-shadow: var(--shadow-card);
+        position: relative;
+      }
+
+      .plan.featured {
+        border-color: var(--ember);
+        box-shadow: 0 24px 50px -30px color-mix(in oklab, var(--ember) 70%, transparent);
+      }
+
+      .plan .badge {
+        position: absolute;
+        top: -12px;
+        left: 1.75rem;
+        background: var(--ember);
+        color: #1b1206;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        font-weight: 600;
+      }
+
+      .plan h3 {
+        font-size: 1.15rem;
+      }
+
+      .plan .desc {
+        color: var(--muted);
+        font-size: 0.88rem;
+        margin: 0.4rem 0 1.2rem;
+      }
+
+      .plan .price {
+        font-family: var(--font-display);
+        font-size: 2.4rem;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .plan .price small {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--muted);
+        font-family: var(--font-sans);
+      }
+
+      .plan ul {
+        list-style: none;
+        margin: 1.4rem 0;
+        display: grid;
+        gap: 0.6rem;
+        flex: 1;
+      }
+
+      .plan li {
+        display: flex;
+        gap: 0.55rem;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .plan li::before {
+        content: '✓';
+        color: var(--success-600);
+        font-weight: 700;
+      }
+
+      .plan .btn {
+        width: 100%;
+      }
+
+      .faq {
+        max-width: 48rem;
+        margin: 0 auto;
+      }
+
+      .faq-item {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 0.75rem;
+        margin-bottom: 0.75rem;
+        overflow: hidden;
+      }
+
+      .faq-q {
+        width: 100%;
+        text-align: left;
+        background: transparent;
+        border: none;
+        padding: 1.1rem 1.25rem;
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--ink);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .faq-q .plus {
+        color: var(--ember);
+        font-size: 1.3rem;
+        transition: transform 0.25s ease;
+        font-weight: 400;
+      }
+
+      .faq-item.open .faq-q .plus {
+        transform: rotate(45deg);
+      }
+
+      .faq-a {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+        padding: 0 1.25rem;
+        color: var(--muted);
+        font-size: 0.93rem;
+      }
+
+      .faq-item.open .faq-a {
+        max-height: 320px;
+        padding: 0 1.25rem 1.15rem;
+      }
+
+      .cta {
+        background-color: var(--graphite-900);
+        background-image: radial-gradient(
+          60% 100% at 50% 120%,
+          color-mix(in oklab, var(--ember) 35%, transparent),
+          transparent 60%
+        );
+        color: #fff;
+        text-align: center;
+        border-radius: 1.5rem;
+        padding: clamp(2.5rem, 6vw, 4.5rem) 1.5rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .cta h2 {
+        font-size: clamp(1.8rem, 1.2rem + 2.4vw, 2.8rem);
+        font-weight: 800;
+        margin-bottom: 1rem;
+      }
+
+      .cta p {
+        color: var(--steel-300);
+        max-width: 34rem;
+        margin: 0 auto 2rem;
+      }
+
+      .cta-actions {
+        display: flex;
+        gap: 0.8rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      footer {
+        background: var(--graphite-900);
+        color: var(--steel-400);
+        padding: 3.5rem 0 2rem;
+        margin-top: 4rem;
+      }
+
+      .foot-grid {
+        display: grid;
+        grid-template-columns: 1.6fr repeat(3, 1fr);
+        gap: 2rem;
+        padding-bottom: 2.5rem;
+        border-bottom: 1px solid rgb(255 255 255 / 0.08);
+      }
+
+      .foot-grid h4 {
+        color: #fff;
+        font-family: var(--font-sans);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 1rem;
+      }
+
+      .foot-grid ul {
+        list-style: none;
+        display: grid;
+        gap: 0.6rem;
+        font-size: 0.88rem;
+      }
+
+      .foot-grid a:hover {
+        color: #fff;
+      }
+
+      .foot-about p {
+        font-size: 0.88rem;
+        max-width: 22rem;
+        margin-top: 1rem;
+      }
+
+      .foot-bottom {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding-top: 1.75rem;
+        font-size: 0.82rem;
+        color: var(--steel-500);
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+
+      .reveal.in {
+        opacity: 1;
+        transform: none;
+      }
+
+      @media (max-width: 960px) {
+        .hero-grid,
+        .flow-step.active {
+          grid-template-columns: 1fr;
+          gap: 2.5rem;
+        }
+
+        .screen {
+          transform: none;
+        }
+
+        .modules,
+        .pricing,
+        .features-grid,
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .foot-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (max-width: 780px) {
+        .nav-links,
+        .nav-actions .btn-ghost {
+          display: none;
+        }
+
+        .nav-toggle {
+          display: block;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .modules,
+        .pricing,
+        .features-grid,
+        .stats-grid,
+        .foot-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .kds {
+          grid-template-columns: 1fr;
+        }
+
+        .nav-actions .btn-primary {
+          display: none;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        .reveal,
+        .flow-step.active,
+        .screen {
+          transition: none;
+          animation: none;
+          opacity: 1;
+          transform: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="nav">
+      <div class="wrap">
+        <div class="nav-inner">
+          <a class="brand" href="#top">
+            <span class="brand-mark">◗</span>
+            El Pase
+          </a>
+          <nav>
+            <ul class="nav-links">
+              <li><a href="#modulos">Módulos</a></li>
+              <li><a href="#flujo">Cómo funciona</a></li>
+              <li><a href="#plataforma">Plataforma</a></li>
+              <li><a href="#precios">Precios</a></li>
+              <li><a href="#faq">Preguntas</a></li>
+            </ul>
+          </nav>
+          <div class="nav-actions">
+            <a class="btn btn-ghost" href="#login" style="color: #fff; border-color: rgb(255 255 255 / 0.18)"
+              >Iniciar sesión</a
+            >
+            <a class="btn btn-primary" href="#demo">Solicitar demo</a>
+            <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
+          </div>
+        </div>
+        <div class="mobile-menu" id="mobileMenu">
+          <a href="#modulos">Módulos</a>
+          <a href="#flujo">Cómo funciona</a>
+          <a href="#plataforma">Plataforma</a>
+          <a href="#precios">Precios</a>
+          <a href="#faq">Preguntas</a>
+          <a href="#login">Iniciar sesión</a>
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <div class="hero">
+        <div class="wrap hero-grid">
+          <div>
+            <span class="eyebrow">Restaurantes · Multi-sucursal · SaaS</span>
+            <h1>El sistema operativo que <span class="glow">mueve tu restaurante</span></h1>
+            <p class="lead">
+              Desde que se abre una mesa hasta que entra a caja y descuenta el inventario. Comandas,
+              cocina, reparto, compras y finanzas — sincronizados en una sola plataforma.
+            </p>
+            <div class="hero-cta">
+              <a class="btn btn-primary" href="#demo">Solicitar demo</a>
+              <a class="btn btn-dark-ghost" href="#flujo">Ver cómo funciona →</a>
+            </div>
+            <div class="hero-note">
+              <span><i class="dot"></i> Sin instalación</span>
+              <span>Multi-tenant por sucursal</span>
+              <span>Roles y permisos a medida</span>
+            </div>
+          </div>
+          <div class="screen" aria-hidden="true">
+            <div class="screen-bar">
+              <i></i><i></i><i></i>
+              <span class="screen-url">mi-restaurante.elpase.app / cocina</span>
+            </div>
+            <div class="kds">
+              <div class="chit heat">
+                <div class="chit-top"><b>MESA 4</b><span class="pill pill-warn">Atascada</span></div>
+                <ul>
+                  <li><span>2×</span> Hamburguesa doble</li>
+                  <li><span>1×</span> Papas rústicas</li>
+                  <li><span>1×</span> Limonada</li>
+                </ul>
+                <div class="chit-foot">hace 12 min</div>
+              </div>
+              <div class="chit">
+                <div class="chit-top"><b>DOMICILIO 88</b><span class="pill pill-info">En curso</span></div>
+                <ul>
+                  <li><span>1×</span> Pizza napolitana</li>
+                  <li><span>1×</span> Ensalada césar</li>
+                </ul>
+                <div class="chit-foot">hace 6 min</div>
+              </div>
+              <div class="chit">
+                <div class="chit-top"><b>MESA 1</b><span class="pill pill-success">Lista</span></div>
+                <ul>
+                  <li><span>3×</span> Tacos de cochinita</li>
+                  <li><span>2×</span> Agua de horchata</li>
+                </ul>
+                <div class="chit-foot">hace 3 min</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="wrap stats-grid">
+          <div class="stat"><b data-count="13">0</b><span>Módulos integrados</span></div>
+          <div class="stat"><b data-count="1" data-suffix=".">0</b><span>Solo sistema operativo</span></div>
+          <div class="stat"><b data-count="100" data-suffix="%">0</b><span>Datos aislados por cliente</span></div>
+          <div class="stat"><b data-count="24" data-suffix="/7">0</b><span>Disponibilidad en la nube</span></div>
+        </div>
+      </div>
+
+      <section id="modulos">
+        <div class="wrap">
+          <div class="section-head center reveal">
+            <span class="eyebrow">Todo el restaurante, conectado</span>
+            <h2>Cada área de tu operación, en un solo lugar</h2>
+            <p>
+              Módulos que comparten la misma información: vender descuenta inventario, comprar lo
+              repone, cobrar alimenta el arqueo. Sin hojas de cálculo ni sistemas desconectados.
+            </p>
+          </div>
+          <div class="modules">
+            <article class="module reveal">
+              <div class="module-ico">📖</div>
+              <h3>Menú y catálogo</h3>
+              <p>Categorías, productos, variantes vendibles, adiciones y precios por sucursal.</p>
+              <span class="tag">menu</span>
+            </article>
+            <article class="module reveal">
+              <div class="module-ico">🧾</div>
+              <h3>Comandas</h3>
+              <p>Mesas, pedidos por canal, descuentos, cancelaciones y totales recalculados en el servidor.</p>
+              <span class="tag">orders</span>
+            </article>
+            <article class="module reveal">
+              <div class="module-ico">👨‍🍳</div>
+              <h3>Cocina (KDS)</h3>
+              <p>Estaciones de preparación, ruteo automático por producto y tablero en tiempo real.</p>
+              <span class="tag">kitchen</span>
+            </article>
+            <article class="module reveal">
+              <div class="module-ico">💵</div>
+              <h3>Caja y arqueo</h3>
+              <p>Sesiones de caja, movimientos y conciliación con diferencia esperado vs. contado.</p>
+              <span class="tag">cash</span>
+            </article>
+            <article class="module reveal">
+              <div class="module-ico">🛵</div>
+              <h3>Domicilios</h3>
+              <p>Rutas, repartidores y despachos con ciclo de entrega: asignado, en tránsito, entregado.</p>
+              <span class="tag">delivery</span>
+            </article>
+            <article class="module reveal">
+              <div class="module-ico">📦</div>
+              <h3>Inventario</h3>
+              <p>Stock por sucursal, umbrales de reorden y ledger de movimientos como fuente de verdad.</p>
+              <span class="tag">inventory</span>
+            </article>
+            <article class="module reveal">
+              <div class="module-ico">🥘</div>
+              <h3>Recetas (BOM)</h3>
+              <p>Ingredientes por variante. Vender descuenta insumos; el lazo venta–stock queda cerrado.</p>
+              <span class="tag">recipes</span>
+            </article>
+            <article class="module reveal">
+              <div class="module-ico">🚚</div>
+              <h3>Compras</h3>
+              <p>Proveedores, solicitudes, órdenes de compra, recepción a inventario y pagos.</p>
+              <span class="tag">purchasing</span>
+            </article>
+            <article class="module reveal">
+              <div class="module-ico">🧑‍🤝‍🧑</div>
+              <h3>Clientes</h3>
+              <p>Preferencias, fiado y liquidación de créditos ligados a la persona.</p>
+              <span class="tag">customers</span>
+            </article>
+            <article class="module reveal">
+              <div class="module-ico">📊</div>
+              <h3>Finanzas</h3>
+              <p>Categorías de gasto y egresos por sucursal en un ledger independiente de la caja.</p>
+              <span class="tag">finance</span>
+            </article>
+            <article class="module reveal">
+              <div class="module-ico">🧑‍🍳</div>
+              <h3>Personal</h3>
+              <p>Empleados, turnos planificados, asistencias con check-in/out y comisiones.</p>
+              <span class="tag">staff</span>
+            </article>
+            <article class="module reveal">
+              <div class="module-ico">🔐</div>
+              <h3>Acceso y auditoría</h3>
+              <p>RBAC dinámico, permisos por rol, overrides y consulta inmutable del log de actividad.</p>
+              <span class="tag">rbac · audit</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="flujo" class="flow">
+        <div class="wrap">
+          <div class="section-head center reveal">
+            <span class="eyebrow">El ciclo completo</span>
+            <h2>De la mesa al inventario, sin fricción</h2>
+            <p>Cada paso alimenta al siguiente. Mira cómo se mueve un pedido por la plataforma.</p>
+          </div>
+          <div class="tabs reveal" role="tablist" aria-label="Pasos del flujo">
+            <button class="tab active" data-step="0" role="tab" aria-selected="true">1 · Tomar pedido</button>
+            <button class="tab" data-step="1" role="tab" aria-selected="false">2 · Preparar</button>
+            <button class="tab" data-step="2" role="tab" aria-selected="false">3 · Cobrar</button>
+            <button class="tab" data-step="3" role="tab" aria-selected="false">4 · Cerrar y descontar</button>
+          </div>
+
+          <div class="flow-panel">
+            <div class="flow-step active" data-step="0">
+              <div class="flow-copy">
+                <h3>El mesero abre la mesa y toma la comanda</h3>
+                <p>
+                  Elige canal (mesa, para llevar o domicilio), agrega ítems con su variante y adiciones.
+                  El precio se toma del catálogo de la sucursal activa.
+                </p>
+                <ul>
+                  <li>Mesa marcada como ocupada automáticamente</li>
+                  <li>Precio = producto de sucursal + variante</li>
+                  <li>Empleado resuelto desde el usuario actual</li>
+                </ul>
+              </div>
+              <div class="flow-card">
+                <div class="row"><span>Canal</span><span>Dine-in · Mesa 4</span></div>
+                <div class="row"><span>Ítems</span><span>3</span></div>
+                <div class="row"><span>Atendido por</span><span>Valentina R.</span></div>
+                <div class="row"><span>Subtotal</span><span>$84.500</span></div>
+                <div class="row"><span>Estado</span><span style="color: var(--ember)">Abierta</span></div>
+              </div>
+            </div>
+
+            <div class="flow-step" data-step="1">
+              <div class="flow-copy">
+                <h3>La cocina recibe solo lo suyo</h3>
+                <p>
+                  Al enviar a cocina, cada ítem se rutea a su estación. El tablero KDS avanza
+                  <span class="mono">pendiente → en preparación → listo</span>.
+                </p>
+                <ul>
+                  <li>Tickets por estación, idempotentes</li>
+                  <li>Los ítems cancelados no se preparan</li>
+                  <li>Tiempo visible para cuidar el servicio</li>
+                </ul>
+              </div>
+              <div class="flow-card">
+                <div class="row"><span>Estación</span><span>Parrilla</span></div>
+                <div class="row"><span>Tickets activos</span><span>4</span></div>
+                <div class="row"><span>Más antiguo</span><span style="color: var(--alert)">12 min</span></div>
+                <div class="row"><span>Listos último minuto</span><span>6</span></div>
+              </div>
+            </div>
+
+            <div class="flow-step" data-step="2">
+              <div class="flow-copy">
+                <h3>El cobro entra a la caja abierta</h3>
+                <p>
+                  Registrar el pago crea, en una sola transacción, el pago de la comanda y el
+                  movimiento de caja. Efectivo afecta el cajón; Nequi, Daviplata y tarjeta se registran aparte.
+                </p>
+                <ul>
+                  <li>Requiere una sesión de caja abierta</li>
+                  <li>Un solo arqueo por sucursal</li>
+                  <li>Diferencia calculada contra lo contado</li>
+                </ul>
+              </div>
+              <div class="flow-card">
+                <div class="row"><span>Método</span><span>Efectivo + Nequi</span></div>
+                <div class="row"><span>Apertura de caja</span><span>$200.000</span></div>
+                <div class="row"><span>Esperado</span><span>$284.500</span></div>
+                <div class="row"><span>Contado</span><span>$284.500</span></div>
+                <div class="row"><span>Diferencia</span><span style="color: var(--success)">$0 ✓</span></div>
+              </div>
+            </div>
+
+            <div class="flow-step" data-step="3">
+              <div class="flow-copy">
+                <h3>Al cerrar, el inventario se actualiza solo</h3>
+                <p>
+                  Por cada ítem vendido se busca su receta y se descuenta cada insumo del stock de la
+                  sucursal. El lazo venta–receta–stock queda cerrado, sin doble descuento.
+                </p>
+                <ul>
+                  <li>Idempotente y atómico</li>
+                  <li>Señala faltantes para recuento</li>
+                  <li>Compras repone lo que la venta consume</li>
+                </ul>
+              </div>
+              <div class="flow-card">
+                <div class="row"><span>Insumos descontados</span><span>7</span></div>
+                <div class="row"><span>Movimientos</span><span>out / sale</span></div>
+                <div class="row"><span>Bajo stock</span><span style="color: var(--warn)">2 insumos</span></div>
+                <div class="row"><span>Reposición sugerida</span><span>Orden de compra</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="plataforma">
+        <div class="wrap">
+          <div class="section-head center reveal">
+            <span class="eyebrow">Hecho para crecer</span>
+            <h2>Una plataforma, muchas sucursales</h2>
+            <p>
+              Arquitectura multi-tenant con aislamiento de datos por cliente y control por sucursal.
+              Da de alta un negocio nuevo sin tocar infraestructura.
+            </p>
+          </div>
+          <div class="features-grid">
+            <div class="feature reveal">
+              <div class="feature-ico">🏬</div>
+              <div>
+                <h3>Multi-sucursal real</h3>
+                <p>Cada entidad vive en su sucursal: precios, stock, caja, turnos y despachos.</p>
+              </div>
+            </div>
+            <div class="feature reveal">
+              <div class="feature-ico">🔐</div>
+              <div>
+                <h3>Permisos a medida</h3>
+                <p>Roles y permisos dinámicos con overrides por usuario y caché con invalidación inmediata.</p>
+              </div>
+            </div>
+            <div class="feature reveal">
+              <div class="feature-ico">🧩</div>
+              <div>
+                <h3>Modular y extensible</h3>
+                <p>Arquitectura hexagonal: cada dominio evoluciona sin romper a los demás.</p>
+              </div>
+            </div>
+            <div class="feature reveal">
+              <div class="feature-ico">🕵️</div>
+              <div>
+                <h3>Auditoría inmutable</h3>
+                <p>Consulta read-only de cada acción, con filtros por actor, entidad y sucursal.</p>
+              </div>
+            </div>
+            <div class="feature reveal">
+              <div class="feature-ico">☁️</div>
+              <div>
+                <h3>En la nube</h3>
+                <p>Disponible desde cualquier dispositivo. Sin instalaciones ni mantenimiento local.</p>
+              </div>
+            </div>
+            <div class="feature reveal">
+              <div class="feature-ico">🇨🇴</div>
+              <div>
+                <h3>Pensado para Colombia</h3>
+                <p>Métodos de pago locales como Nequi y Daviplata, con arqueo que separa efectivo de digital.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="precios">
+        <div class="wrap">
+          <div class="section-head center reveal">
+            <span class="eyebrow">Planes</span>
+            <h2>Precios simples que escalan contigo</h2>
+            <p>Empieza con un negocio y crece a varias sucursales. Sin contratos sorpresa.</p>
+          </div>
+          <div class="pricing">
+            <div class="plan reveal">
+              <h3>Básico</h3>
+              <p class="desc">Para un solo local que está digitalizándose.</p>
+              <div class="price">$80<small> / mes</small></div>
+              <ul>
+                <li>1 sucursal</li>
+                <li>Menú, comandas y caja</li>
+                <li>Hasta 5 usuarios</li>
+                <li>Soporte por correo</li>
+              </ul>
+              <a class="btn btn-ghost" href="#demo">Empezar</a>
+            </div>
+            <div class="plan featured reveal">
+              <span class="badge">Más elegido</span>
+              <h3>Pro</h3>
+              <p class="desc">Para restaurantes en operación con cocina y reparto.</p>
+              <div class="price">$150<small> / mes</small></div>
+              <ul>
+                <li>Hasta 5 sucursales</li>
+                <li>Todos los módulos operativos</li>
+                <li>KDS, domicilios e inventario</li>
+                <li>Usuarios ilimitados</li>
+                <li>Soporte prioritario</li>
+              </ul>
+              <a class="btn btn-primary" href="#demo">Solicitar demo</a>
+            </div>
+            <div class="plan reveal">
+              <h3>Empresa</h3>
+              <p class="desc">Cadenas con necesidades a la medida.</p>
+              <div class="price">A medida</div>
+              <ul>
+                <li>Sucursales y tenants ilimitados</li>
+                <li>Integraciones y reportes a medida</li>
+                <li>Onboarding y capacitación</li>
+                <li>Acuerdo de nivel de servicio</li>
+              </ul>
+              <a class="btn btn-ghost" href="#demo">Hablar con ventas</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq">
+        <div class="wrap">
+          <div class="section-head center reveal">
+            <span class="eyebrow">Dudas frecuentes</span>
+            <h2>Preguntas frecuentes</h2>
+          </div>
+          <div class="faq reveal">
+            <div class="faq-item">
+              <button class="faq-q" aria-expanded="false">
+                ¿Necesito instalar algo?
+                <span class="plus">+</span>
+              </button>
+              <div class="faq-a">
+                No. El Pase es una plataforma web: entras con tu usuario desde cualquier computador,
+                tablet o celular. No hay servidores que mantener en el local.
+              </div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-q" aria-expanded="false">
+                ¿Funciona si tengo varias sucursales?
+                <span class="plus">+</span>
+              </button>
+              <div class="faq-a">
+                Sí. Toda la operación está separada por sucursal —precios, stock, caja, turnos y
+                reparto— y administras cada local desde la misma cuenta.
+              </div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-q" aria-expanded="false">
+                ¿Los datos de mi restaurante están aislados?
+                <span class="plus">+</span>
+              </button>
+              <div class="faq-a">
+                Sí. Es una plataforma multi-tenant: cada negocio tiene su espacio aislado y no puede
+                ver información de otros clientes.
+              </div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-q" aria-expanded="false">
+                ¿Vender descuenta mi inventario automáticamente?
+                <span class="plus">+</span>
+              </button>
+              <div class="faq-a">
+                Sí. Con las recetas (BOM) cargadas, cada venta descuenta los insumos de la sucursal.
+                Las compras reponen el stock para que el ciclo nunca se rompa.
+              </div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-q" aria-expanded="false">
+                ¿Puedo controlar qué ve cada empleado?
+                <span class="plus">+</span>
+              </button>
+              <div class="faq-a">
+                Sí. Cuentas con roles y permisos configurables: un mesero, un cajero o un administrador
+                ven solo las pantallas y acciones que les corresponden.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="wrap" id="demo">
+        <div class="cta reveal">
+          <span class="eyebrow" style="color: var(--ember)">Empieza hoy</span>
+          <h2 style="margin-top: 1rem">Tu restaurante, bajo control</h2>
+          <p>
+            Agenda una demostración y te mostramos el sistema con tu propio menú. Sin compromiso.
+          </p>
+          <div class="cta-actions">
+            <a class="btn btn-primary" href="mailto:sistema@pase.uk">Solicitar demo</a>
+            <a class="btn btn-dark-ghost" href="#modulos">Explorar módulos</a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <div class="foot-grid">
+          <div class="foot-about">
+            <a class="brand" href="#top"><span class="brand-mark">◗</span> El Pase</a>
+            <p>
+              El sistema operativo para restaurantes: comandas, cocina, caja, domicilios, inventario y
+              finanzas en una sola plataforma.
+            </p>
+          </div>
+          <div>
+            <h4>Producto</h4>
+            <ul>
+              <li><a href="#modulos">Módulos</a></li>
+              <li><a href="#flujo">Cómo funciona</a></li>
+              <li><a href="#precios">Precios</a></li>
+              <li><a href="#plataforma">Plataforma</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Empresa</h4>
+            <ul>
+              <li><a href="#faq">Preguntas frecuentes</a></li>
+              <li><a href="#demo">Contacto</a></li>
+              <li><a href="#login">Iniciar sesión</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Contacto</h4>
+            <ul>
+              <li><a href="mailto:sistema@pase.uk">sistema@pase.uk</a></li>
+              <li>Bogotá, Colombia</li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot-bottom">
+          <span>© <span id="year"></span> El Pase. Todos los derechos reservados.</span>
+          <span class="mono">Hecho para restaurantes que no se detienen.</span>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const navToggle = document.getElementById('navToggle');
+      const mobileMenu = document.getElementById('mobileMenu');
+      navToggle.addEventListener('click', () => {
+        const open = mobileMenu.classList.toggle('open');
+        navToggle.setAttribute('aria-expanded', String(open));
+        navToggle.textContent = open ? '✕' : '☰';
+      });
+      mobileMenu.querySelectorAll('a').forEach((a) =>
+        a.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          navToggle.textContent = '☰';
+          navToggle.setAttribute('aria-expanded', 'false');
+        }),
+      );
+
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      const revealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add('in');
+              revealObserver.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.12 },
+      );
+      document.querySelectorAll('.reveal').forEach((el, i) => {
+        el.style.transitionDelay = `${Math.min(i % 6, 5) * 60}ms`;
+        revealObserver.observe(el);
+      });
+
+      const countObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (!e.isIntersecting) return;
+            const el = e.target;
+            const target = Number(el.dataset.count);
+            const suffix = el.dataset.suffix || '';
+            const duration = 1100;
+            const start = performance.now();
+            const tick = (now) => {
+              const p = Math.min((now - start) / duration, 1);
+              const eased = 1 - Math.pow(1 - p, 3);
+              el.textContent = Math.round(target * eased) + suffix;
+              if (p < 1) requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+            countObserver.unobserve(el);
+          });
+        },
+        { threshold: 0.5 },
+      );
+      document.querySelectorAll('[data-count]').forEach((el) => countObserver.observe(el));
+
+      const tabs = document.querySelectorAll('.tab');
+      const steps = document.querySelectorAll('.flow-step');
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          const target = tab.dataset.step;
+          tabs.forEach((t) => {
+            t.classList.toggle('active', t === tab);
+            t.setAttribute('aria-selected', String(t === tab));
+          });
+          steps.forEach((s) => s.classList.toggle('active', s.dataset.step === target));
+        });
+      });
+
+      document.querySelectorAll('.faq-q').forEach((q) => {
+        q.addEventListener('click', () => {
+          const item = q.parentElement;
+          const open = item.classList.toggle('open');
+          q.setAttribute('aria-expanded', String(open));
+        });
+      });
+    </script>
+  </body>
+</html>
